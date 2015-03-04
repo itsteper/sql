@@ -1,0 +1,8 @@
+#sql
+# Запрос для проверки профилей (важно! самого профиля может и не быть)
+select vp.profile_infis_code,trunc(vpp.date_begin), trunc(vpp.date_end)
+
+from
+solution_eis.Vmu_profile vp,solution_eis.vmu_prvs_profile vpp
+where vpp.id_profile=vp.id_profile
+and vpp.db_luid=vp.db_luid;
