@@ -1,0 +1,20 @@
+*/ Выбираем косячные записи /*
+SELECT frvi.* --(MAX(TO_NUMBER(frvi.text)) + 1) AS text
+    FROM solution_reg.form_result_in fri
+        ,solution_reg.form_result_value_in frvi
+        ,solution_form.form_item fi
+    WHERE fri.code = 'RegReception_TFG'
+      AND fi.code = '11'
+      AND frvi.form_result_id=fri.id
+      AND frvi.form_item_id=fi.id
+      AND TO_CHAR(frvi.updatedate, 'yyyy') = TO_CHAR(SYSDATE,'yyyy')
+      and translate(frvi.text, '_1234567890', '_') is not null
+
+*/ Селектим по кейадишнику на апдейт /*    
+select * from solution_reg.form_result_value_in
+      where id = 1893154 for update
+
+*/ Сразу апдейтим по кейдишнику филд /*
+update solution_reg.form_result_value_in
+      set text = ''
+      where id = 1893154
