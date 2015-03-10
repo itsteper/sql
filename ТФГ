@@ -18,3 +18,4 @@ select * from solution_reg.form_result_value_in
 update solution_reg.form_result_value_in
       set text = ''
       where id = 1893154
+*/ Dont forget commit F10 /*
