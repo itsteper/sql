@@ -1,0 +1,6 @@
+select w.text, b.* from bed b, ward w
+where b.depid = '29'
+and w.keyid = b.wardid
+
+select * from visit
+where bedid = '2801'
