@@ -1,0 +1,5 @@
+select fn_pat_name_by_id(v.patientid)
+       ,v.num  
+       ,v.omspayprof
+from visit v
+where v.omspayprof in ('321381','321382')
