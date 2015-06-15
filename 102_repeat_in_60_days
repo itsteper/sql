@@ -1,0 +1,14 @@
+#Черновик
+select v1.*, vsout.diag_1vis,  from 
+visit v1,
+(select v2.*,
+        (select text from patdiag where v2.keyid = visitid and diagtype = 1) as diag_1vis
+   from visit v2
+where v2.dat1 between to_date('01.01.2015 00:00', 'dd.mm.yyyy hh24:mi') and to_date('31.03.2015 23:59', 'dd.mm.yyyy hh24:mi')
+and v2.dep1id in (select keyid from dep where out_status = 1)
+and vistype not in (101,105)) vsout
+where v1.patientid = vsout.patientid
+and v1.dat <= (vsout.dat1 + 60)
+and v1.dat > vsout.dat1
+and v1.vistype = 101
+and v1.dep1id in (select keyid from dep where typeid = 102 and status =1)
