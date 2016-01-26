@@ -1,4 +1,4 @@
-*/ Выбираем косячные записи /*
+*/ Выбираем косячные записи */
 SELECT frvi.* --(MAX(TO_NUMBER(frvi.text)) + 1) AS text
     FROM solution_reg.form_result_in fri
         ,solution_reg.form_result_value_in frvi
