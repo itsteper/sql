@@ -1,0 +1,30 @@
+SELECT
+p.num AS nomer_PAT, /*íîìåð ïàöèåíòà */
+v.num AS nomer_IB, /*íîìåð ÈÁ*/
+p.lastname, /*Ô*/
+p.firstname, /*È*/
+p.secondname, /*Î*/
+fn_get_sex(p.keyid) AS SEX, /*ïîë*/
+TO_CHAR(p.birthdate, 'dd.mm.yyyy') AS DR, /*äð*/
+fn_pat_age_by_id(v.patientid) AS VOZRAST, /*âîçðàñò*/
+fn_pat_address_by_id(v.patientid) AS ADDR, /*àäðåñ*/
+p.phone AS phone, /*òåëåôîí*/
+(SELECT d.code FROM diagnos d WHERE d.keyid = (SELECT pd.diagid FROM patdiag pd WHERE pd.visitid = v.keyid AND pd.diagtype = 1 /*and pd.diagcode = 1*/)) AS MKB, /*äèàãíîç êîä*/
+TO_CHAR(v.dat, 'dd.mm.yyyy') AS data_in, /*äàòà ïîñòóïëåíèÿ*/
+TO_CHAR(v.dat1, 'dd.mm.yyyy') AS data_out, /*äàòà âûáûòèÿ*/
+(SELECT dp.text FROM dep dp WHERE dp.keyid = v.dep1id AND (dp.code = '14' OR dp.code = '13' OR dp.code = '11' OR dp.code = '12' OR dp.code = '15' OR dp.code = '17')) AS ISHOD, /*èñõîä*/
+gsp_get_day_stac(v.keyid) as KD,
+
+
+fn_get_protocol_answ_by_patid(v.patientid,'RegReception_TFG','230') AS otkuda, /*îòêóäà äîñòàâëåí*/
+(SELECT dp.text FROM dep dp WHERE dp.keyid = v.depid) AS DEP_OUT, /*îòäåëåíèå âûáûòèÿ*/
+
+v.omspayprof, /*ïðîôèëü îìñ*/
+(SELECT COUNT(*) FROM oper o WHERE o.patientid = v.patientid), /*êîë-âî îïåðàöèé*/
+
+(SELECT d.text FROM diagnos d WHERE d.keyid = (SELECT pd.diagid FROM patdiag pd WHERE pd.visitid = v.keyid AND pd.diagtype = 1 /*and pd.diagcode = 1*/)) AS MKB_dis/*ìêá ðàñøèôðîâêà*/
+ FROM visit v, patient p
+WHERE v.patientid = p.keyid
+AND v.depid = 31
+AND v.vistype = 102
+AND v.dep1id in (11, 10, 8, 9, 12, 7, 14)
