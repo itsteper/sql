@@ -1,0 +1,39 @@
+SELECT v.rn AS rn
+      ,v.vnum AS vnum
+      ,v.dat_po AS dat_po
+      ,v.tim_po AS tim_po
+      ,v.dur_po AS dur_po
+      ,v.lastname AS lastname
+      ,v.firstname AS firstname
+      ,v.secondname AS secondname
+      ,v.dep AS dep
+      ,fn_get_categ_name(v.v_profid) AS prof_out
+      ,NVL(pkg_protocol_universal.get_answer(v.keyid, '260', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '260', 'RegReception_TFG')) AS diag_code
+      ,NVL(pkg_protocol_universal.get_answer(v.keyid, '220', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '220', 'RegReception_TFG')) AS aim
+      ,NVL(pkg_protocol_universal.get_answer(v.keyid, '240', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '240', 'RegReception_TFG')) AS sost
+      ,fn_get_diag_name_by_type(v.keyid) AS diag_text
+      ,v.pnum AS pnum
+      ,NVL(pkg_protocol_universal.get_answer(v.keyid, '130', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '130', 'RegReception_TFG')) AS napr
+      ,NVL(pkg_protocol_universal.get_answer(v.keyid, '290', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '290', 'RegReception_TFG')) AS dostavlen
+      ,v.bdate AS bdate
+      ,fn_pat_age_by_id_dat(v.pat_keyid, v.v_dat) AS age
+      ,fn_pat_sex_by_id(v.pat_keyid) AS sex
+      ,fn_pat_address_by_id_full_122(v.pat_keyid) AS address
+      ,v.napr2
+      ,v.dat_out
+      ,NVL(pkg_protocol_universal.get_answer(v.keyid, '140', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '140', 'RegReception_TFG')) AS naryad_num
+      ,fn_get_categ_name(v.v_profid) AS prof_po
+      ,v.dep_out AS dep_out
+      ,fn_get_diag_code_by_type(v.vout_keyid) AS diag_code_end
+      ,NVL(pkg_protocol_universal.get_answer(v.keyid, '260', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '260', 'RegReception_TFG')) AS diag_napr
+      ,v.tim_out AS tim_out
+      ,trim(substr(NVL(pkg_protocol_universal.get_answer(v.keyid, '230', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '230', 'RegReception_TFG'))
+      ,instr(NVL(pkg_protocol_universal.get_answer(v.keyid, '230', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '230', 'RegReception_TFG')),'-') + 1)) AS rayon_vizova
+      ,v.dep_v AS dep_v
+       ,((v.dat_out_t - v.dat_po_t)*24) AS time_g
+      ,(SELECT omspayprof FROM visit WHERE keyid = vout_keyid) AS oms
+      ,(SELECT text FROM mes  m WHERE m.code = (SELECT omspayprof FROM visit WHERE keyid = vout_keyid)) AS name_oms
+      ,(SELECT m.text FROM man m WHERE m.keyid = (SELECT UPDATEby FROM visit WHERE keyid = v.keyid)) AS manus
+      ,NVL(pkg_protocol_universal.get_answer(v.keyid, '120', 'RegReception_TFG', 'c_text'),pkg_protocol_universal.get_answer(v.keyid, '120', 'RegReception_TFG')) AS POST_TYPE
+FROM V_ALL_JOURNALS v
+WHERE TRUNC(v.vout_dat1) BETWEEN TRUNC(:DAT1) AND TRUNC(:DAT2)
