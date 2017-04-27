@@ -1,0 +1,56 @@
+SELECT 
+        TO_CHAR(v.oper_Dat,'dd.mm.yyyy hh24:mi') AS oper_date
+       ,v.p_num
+       ,v.num
+       ,v.lastname
+       ,v.firstname
+       ,v.secondname
+       ,TO_CHAR (TRUNC(v.birthdate), 'dd.mm.yyyy') AS birthdate
+       ,v.pat_age
+       ,v.sex
+       ,v.oper_name
+       ,fn_hosp_total_days(v.rootid) as KD
+       ,v.oper_diag_code
+       ,v.oper_diag_name
+       ,v.oper_osl
+       ,v.oper_osl1
+       ,v.oper_anest
+       ,v.oper_typ
+       ,TO_CHAR (v.po_dat, 'dd.mm.yyyy hh24:mi') AS dat_come
+       ,TO_CHAR (TRUNC(v.dat1), 'dd.mm.yyyy') AS dat_out
+       ,v.company
+       ,v.finance_name
+       ,v.dep
+       ,v.prof
+       ,v.dep1
+       ,v.clinic
+       ,decode(v.typ,'2', 'Экстренный', 'Плановый') AS hosp_type
+       ,v.direction
+       ,decode(v.first_type,'2', 'Повторно', 'Впервые') AS first_type
+       ,v.mkb_code
+       ,v.mkb_text    
+       ,v.mkb_group_code
+       ,v.mkb_group_name  
+       ,decode(v.oper_order,'1', 'Экстренный', '2', 'Плановый', '') AS oper_type
+,v.oper_dep
+FROM
+    V_VISIT_COME_OUT_OPER_REESTR v
+WHERE v.dat1 BETWEEN TO_DATE('2015-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('2015-12-31 23:59:00', 'yyyy-mm-dd hh24:mi:ss')
+          AND (REPLACE('''', '''') IS NULL OR v.company_id IN (''))
+          AND (REPLACE('''', '''') IS NULL OR v.agrid IN (''))
+          AND (REPLACE('', '''') IS NULL OR v.direction IN (''))
+          AND (REPLACE('', '''') IS NULL OR v.diagnos IN (''))
+          AND (REPLACE('', '''') IS NULL OR v.typ IN (''))
+          AND (REPLACE('', '''') IS NULL OR v.first_type IN (''))
+   AND (REPLACE('', '''') IS NULL OR v.finance IN ('')) 
+          AND (REPLACE('''', '''') IS NULL OR v.depid IN (''))
+          AND (REPLACE('''', '''') IS NULL OR v.oper_depid IN (''))
+          AND (REPLACE('''', '''') IS NULL OR v.clinic_id IN (''))
+          AND (REPLACE('''', '''') IS NULL OR (v.osl IN ('') OR v.osl1 IN ('')))
+          AND (REPLACE('', '''') IS NULL OR v.oper_anest IN (''))
+          AND (REPLACE('''', '''') IS NULL OR v.profid IN (''))
+          AND (REPLACE('''', '''') IS NULL OR v.diag_id IN (''))
+          AND (REPLACE('''', '''') IS NULL OR v.oper_diagid IN (''))
+          AND (REPLACE('4154, 4158, 4156, 4150, 4149, 4151, 2588, 2606, 2590, 2608, 2604, 2600, 2589', '''') IS NULL OR v.oper_id IN (4154, 4158, 4156, 4150, 4149, 4151, 2588, 2606, 2590, 2608, 2604, 2600, 2589))
+          AND (REPLACE('''', '''') IS NULL OR v.status_dep_out IN (''))
+          AND (REPLACE('', '''') IS NULL OR v.oper_order IN (''))
