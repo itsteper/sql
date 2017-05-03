@@ -1,0 +1,60 @@
+SELECT p.surname
+      ,p.name
+      ,p.second_name
+      ,p.sex
+      ,TO_CHAR(p.birthday, 'dd.mm.yyyy') AS birthday
+      ,TO_CHAR(c.date_begin, 'dd.mm.yyyy') AS date_begin
+      ,TO_CHAR(c.date_end, 'dd.mm.yyyy') AS date_end
+      ,s.code AS code
+      ,csa.account_number AS account_number
+      ,TO_CHAR(csa.tariff_month, 'mm/yyyy') AS tariff_month
+      ,TO_CHAR(csa.account_date, 'dd.mm.yyyy') AS account_date
+      ,cs.service_cost AS total_summ
+      ,cs.service_count AS total_qty
+      ,NVL((SELECT ro.summ_refuse
+              FROM refuses_obj@eisstac ro
+             WHERE ro.id_case = c.id_case),0) AS refuse_sum
+      ,cs.service_cost -
+       NVL((SELECT ro.summ_refuse
+              FROM refuses_obj@eisstac ro
+             WHERE ro.id_case = c.id_case),0) AS total
+      ,decode((SELECT COUNT(*)
+                 FROM pay_sheets@eisstac psh
+                     ,pay_summs@eisstac ps
+                WHERE ps.id_account = csa.id_account
+                  AND psh.id_pay_calc = ps.id_pay_calc
+                  AND psh.execute_date IS NOT NULL),0,0,cs.service_cost -
+                                                        NVL((SELECT ro.summ_refuse
+                                                               FROM refuses_obj@eisstac ro
+                                                              WHERE ro.id_case = c.id_case),0)) AS oplacheno
+      ,decode((SELECT COUNT(*)
+                 FROM pay_sheets@eisstac psh
+                     ,pay_summs@eisstac ps
+                WHERE ps.id_account = csa.id_account
+                  AND psh.id_pay_calc = ps.id_pay_calc
+                  AND psh.execute_date IS NOT NULL),0,vas.status_name,'Оплачен') AS bill_status
+      ,vp.profile_name AS prof
+      ,vp.profile_infis_code AS prof_code
+      ,vd.diagnosis_code AS diag_code
+      ,psh.pay_number AS po_number
+      ,TO_CHAR(psh.execute_date, 'dd.mm.yyyy') AS po_date
+  FROM case_services_accounts@eisstac csa
+      ,case_services@eisstac cs
+      ,cases@eisstac c
+      ,smo@eisstac s
+      ,vmu_acc_status@eisstac vas
+      ,patient_data@eisstac p
+      ,vmu_profile@eisstac vp
+      ,vmu_diagnosis@eisstac vd
+      ,pay_sheets@eisstac psh
+      ,pay_summs@eisstac ps
+ WHERE csa.id_payer = id_smo
+   AND csa.id_status = vas.id_status
+   AND cs.id_account = csa.id_account
+   AND c.id_case = cs.id_case
+   AND p.id_patient = c.id_patient
+   AND vp.id_profile = cs.id_profile
+   AND vd.id_diagnosis = c.id_diagnosis
+   AND psh.id_pay_calc = ps.id_pay_calc
+   AND ps.id_account = cs.id_account
+   AND TRUNC(psh.execute_date) BETWEEN TO_DATE('2017-04-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('2017-04-30 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
