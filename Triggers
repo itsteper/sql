@@ -1,0 +1,22 @@
+BEGIN
+  FOR RC IN (SELECT 'SOLUTION_MED' as owner, 'LU' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'PATIENT' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'VISIT' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'RNUMB' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'RDAY' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'PATSERV' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'PAYSERV' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'PAYMENT_TOTAL' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'INVOICE' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'BILL' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'AGR' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'AGRPAT' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_MED' as owner, 'POLICE' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
+   UNION ALL SELECT 'SOLUTION_DIAGNOSTIC' as owner, 'RESEARCH' as table_name, 'ID' as key_name, 'DIAGNOSTIC' as postfix from dual
+   ) LOOP
+    create_log_trigger(p_owner      => RC.owner,
+                       p_table_name => rc.table_name,
+                       p_key_name   => rc.key_name,
+                       p_postfix    => rc.postfix);
+  END LOOP;
+END;
