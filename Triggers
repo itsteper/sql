@@ -1,3 +1,5 @@
+--SOLUTION_LOG
+
 BEGIN
   FOR RC IN (SELECT 'SOLUTION_MED' as owner, 'LU' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
    UNION ALL SELECT 'SOLUTION_MED' as owner, 'PATIENT' as table_name, 'KEYID' as key_name, 'MED' as postfix from dual
