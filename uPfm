@@ -57,4 +57,4 @@ SELECT p.surname
    AND vd.id_diagnosis = c.id_diagnosis
    AND psh.id_pay_calc = ps.id_pay_calc
    AND ps.id_account = cs.id_account
-   AND TRUNC(psh.execute_date) BETWEEN TO_DATE('2017-04-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('2017-04-30 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
+   AND TRUNC(psh.execute_date) BETWEEN TO_DATE('2019-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('2019-01-31 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
