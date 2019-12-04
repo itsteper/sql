@@ -1,0 +1,66 @@
+SELECT (SELECT NVL(MAX(d.text), 'Cлучаи, внесенные в ЕИС вручную, без выгрузки из Ариадны')
+          FROM infis.eis_export_data eed
+              ,visit v
+              ,dep d
+         WHERE vp.profile_infis_code = eed.profile
+           AND eed.visit_num = c.ill_history
+           AND eed.surname = pd.surname
+         AND v.keyid = (SELECT v5.visit_id FROM infis.eis_export_data v5
+                                            WHERE v5.id = (SELECT MAX(eed1.id) 
+                                                             FROM infis.eis_export_data eed1 WHERE eed.profile = eed1.profile AND eed.visit_num = eed1.visit_num))
+           AND d.keyid = decode(v.depid,170,121,v.depid)) AS dept_name
+      ,pd.surname || pd.name || pd.second_name AS fio
+      ,c.ill_history
+      ,vp.profile_infis_code
+      ,c.id_case
+      ,cs.service_count
+      ,cs.service_cost
+  FROM solution_eis.cases c
+      ,solution_eis.patient_data pd
+      ,solution_eis.case_services cs
+      ,solution_eis.case_services_accounts csa
+      ,solution_eis.vmu_mu_depts vmd
+      ,solution_eis.vmu_profile vp
+ WHERE c.id_patient = pd.id_patient
+   AND cs.id_case = c.id_case
+   AND csa.id_account = cs.id_account
+   AND vmd.id_dept = cs.id_dept
+   AND ((2 = 1 AND TRUNC(c.date_end) BETWEEN TO_DATE('2019-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('2019-11-30 00:00:00', 'yyyy-mm-dd hh24:mi:ss')) OR
+        (2 = 2 AND TRUNC(csa.account_date) BETWEEN TO_DATE('2019-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('2019-11-30 00:00:00', 'yyyy-mm-dd hh24:mi:ss')))
+   AND vp.id_profile = cs.id_profile
+   AND vp.PROFILE_INFIS_CODE NOT LIKE 'нК%'
+   AND LOWER(csa.account_number) NOT LIKE '%-п'
+UNION ALL
+SELECT (SELECT NVL(MAX(d.text), 'Cлучаи, внесенные в ЕИС вручную, без выгрузки из Ариадны')
+          FROM infis.eis_export_data eed
+              ,visit v
+              ,dep d
+         WHERE vp.profile_infis_code = eed.profile
+           AND eed.visit_num = c.ill_history
+           AND eed.surname = pd.surname
+         AND v.keyid = (SELECT v5.visit_id FROM infis.eis_export_data v5
+                                            WHERE v5.id = (SELECT MAX(eed1.id) 
+                                                             FROM infis.eis_export_data eed1 WHERE eed.profile = eed1.profile AND eed.visit_num = eed1.visit_num))
+           AND d.keyid = decode(v.depid,170,121,fn_get_attr_linkid_by_code(eed.id_dept,7,80))) AS dept_name
+      ,pd.surname || pd.name || pd.second_name AS fio
+      ,c.ill_history
+      ,vp.profile_infis_code
+      ,c.id_case
+      ,cs.service_count
+      ,cs.service_cost
+  FROM solution_eis.cases c
+      ,solution_eis.patient_data pd
+      ,solution_eis.case_services cs
+      ,solution_eis.case_services_accounts csa
+      ,solution_eis.vmu_mu_depts vmd
+      ,solution_eis.vmu_profile vp
+ WHERE c.id_patient = pd.id_patient
+   AND cs.id_case = c.id_case
+   AND csa.id_account = cs.id_account
+   AND vmd.id_dept = cs.id_dept
+   AND TRUNC(c.date_end) BETWEEN TO_DATE('2019-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('2019-11-30 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
+   AND vp.id_profile = cs.id_profile
+   AND vp.PROFILE_INFIS_CODE LIKE 'нК%'
+   AND LOWER(csa.account_number) NOT LIKE '%-п'
+   AND c.id_payer NOT IN (41, 57)
+   ORDER BY dept_name,fio 
